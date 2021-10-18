@@ -1,0 +1,51 @@
+<form id="auth-form" novalidate data-url="<%= action %>" data-redirect="<%= redirect %>">
+  <div class="form-group">
+    <label>Email</label>
+    <input class="form-control" type="email" name="email">
+    <div class="invalid-feedback"></div>
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input class="form-control" type="password" name="password">
+    <div class="invalid-feedback"></div>
+  </div>
+
+  <button class="btn btn-success" type="submit">Submit</button>
+</form>
+
+<script>
+  $(document).ready(function() {
+    $('#auth-form').on('submit', function(e) {
+      e.preventDefault()
+
+      axios({
+        method: 'POST',
+        url: $(e.target).data('url'),
+        data: new FormData(e.target)
+      }).then(function() {
+        window.location.href = $(e.target).data('redirect')
+      }).catch(function(err) {
+        switch (err.response.status) {
+          case 406: {
+            const { response: { data: { errors } }} = err
+
+            $('#auth-form').find('.invalid-feedback').empty()
+            $('#auth-form').find('.is-invalid').removeClass('is-invalid')
+
+            errors.forEach(function(error) {
+              const { param: fieldName, msg } = error
+              const $input = $('#auth-form').find(`[name="${fieldName}"]`)
+              const $invalidFeedback = $input.siblings('.invalid-feedback')
+              $input.addClass('is-invalid')
+              $invalidFeedback.text(msg)
+            })
+            break
+          }
+          default: {
+            alert(err.response.data.message)
+          }
+        }
+      })
+    })
+  })
+</script>

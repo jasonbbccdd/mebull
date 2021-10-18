@@ -1,0 +1,36 @@
+<%- contentFor('meta') %>
+<title>Wishlist Show</title>
+<%- contentFor('styles') %>
+<%- contentFor('scripts') %>
+<%- contentFor('body') %>
+<div id="wishlist-show" class="container my-3 text-center">
+  <h1 class="modal-title my-3">Wishlist <span><%= wishlist.id %></span></h1>
+  <img
+    class="mr-3 mb-3"
+    src="<%= wishlist.User && wishlist.User.avatar ? wishlist.User.avatar : 'https://i1.wp.com/www.mnleadership.org/wp-content/uploads/2017/02/Anonymous-Avatar.png?ssl=1' %>"
+    alt="avatar"
+    style="width: 100px; height: auto;"
+  >
+  <h1 class="mb-3"><%= wishlist.title %></h1>
+  <h2 class="mb-3"><%= wishlist.description%></h2>
+  <h3 class="mb-3"><%= moment(wishlist.createdAt).format('YYYY/MM/DD') %></h3>
+
+  <% if (wishlist.WishlistItems.length > 0) { %>
+    <ul class="list-group">
+      <% wishlist.WishlistItems.forEach(function(item) { %>
+        <li class="list-group-item">
+          <span class="<%= (item.received ? 'text-decloration-through' : '') %>"><%= item.name %></span>
+          <% for (let i = 0; i < 5; i++) { %>
+            <% if (i < item.importance) { %>
+              <i class="fas fa-star"></i>
+            <% } else { %>
+              <i class="far fa-star"></i>
+            <% } %>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <div>No Items</div>
+  <% } %>
+</div>

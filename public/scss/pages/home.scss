@@ -1,0 +1,28 @@
+#home {
+  h1 {
+    text-align: center;
+    color: white;
+    font-size: 100px;
+    font-family: Monoton;
+    -webkit-animation: neon1 1.5s ease-in-out infinite alternate;
+    -moz-animation: neon1 1.5s ease-in-out infinite alternate;
+    animation: neon1 1.5s ease-in-out infinite alternate;
+
+  }
+
+  .text-decloration-through {
+    text-decoration: line-through;
+  }
+
+  .circular_image {
+    float: left;
+    margin-left: 125px;
+    margin-top: 20px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    /* Modified*/
+    /*overflow:hidden;*/
+    background-color: blue;
+  }
+}

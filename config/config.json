@@ -1,6 +1,6 @@
 {
   "development": {
-    "database": "your_project_name_here_development",
+    "database": "mebull_development",
     "host": "localhost",
     "dialect": "postgres"
   },

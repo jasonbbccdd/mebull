@@ -1,0 +1,137 @@
+<form id="wishlist-form" novalidate data-url="<%= action %>" data-method="<%= method %>">
+  <div class="form-group">
+    <label>Title</label>
+    <input
+      class="form-control"
+      type="text"
+      name="title"
+      data-error-ref="title"
+      value="<%= wishlist.title %>"
+      required
+    >
+    <div class="invalid-feedback"></div>
+  </div>
+
+  <div class="form-group">
+    <label>Description</label>
+    <input
+      class="form-control"
+      type="text"
+      name="description"
+      data-error-ref="description"
+      value="<%= wishlist.description %>"
+      required
+    >
+    <div class="invalid-feedback"></div>
+  </div>
+
+  <ul class="list-group mb-3">
+    <% wishlist.WishlistItems.forEach(function(item, index) { %>
+      <%- include('form-wishlist-item-inputs', { item, index }) %>
+    <% }) %>
+    <li class="list-group-item text-center">
+      <button class="btn btn-info add-btn" type="button">Add Item</button>
+    </li>
+  </ul>
+
+  <button class="btn btn-success" type="submit">Submit</button>
+</form>
+
+<script>
+  $(document).ready(function() {
+    $('#wishlist-form').on('submit', function(e) {
+      e.preventDefault()
+
+      axios({
+        method: $(e.target).data('method'),
+        url: $(e.target).data('url'),
+        data: new FormData(e.target)
+      }).then(function(resp) {
+        window.location.href = `/my/wishlists/${resp.data.id}`
+      }).catch(function(err) {
+        switch (err.response.status) {
+          case 406: {
+            const { response: { data: { errors } }} = err
+
+            $('#wishlist-form').find('.invalid-feedback').empty()
+            $('#wishlist-form').find('.is-invalid').removeClass('is-invalid')
+
+            errors.forEach(function(error) {
+              const { param: fieldName, msg } = error
+              const $input = $('#wishlist-form').find(`[data-error-ref="${fieldName}"]`)
+              const $invalidFeedback = $input.siblings('.invalid-feedback')
+              $input.addClass('is-invalid')
+              $invalidFeedback.text(msg)
+            })
+            break
+          }
+          default: {
+            alert(err.response.data.message)
+          }
+        }
+      })
+    })
+
+    $('#wishlist-form').on('click', '.add-btn', (e) => {
+      const $elem = $(e.target)
+      const $parent = $elem.parent()
+      const itemCount = $('#wishlist-form ul li').length
+      const itemIndex = itemCount - 1
+
+      $parent.before(`
+        <li class="list-group-item">
+          <button class="btn btn-danger btn-sm delete-item-btn float-right" type="button"><i class="fas fa-trash"></i></button>
+          <h3 class="text-center">Item <span>${itemCount}</span></h3>
+
+          <div class="form-group">
+            <label>Name</label>
+            <input
+              class="form-control"
+              type="text"
+              name="WishlistItems[${itemIndex}][name]"
+            >
+            <div class="invalid-feedback"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Importance</label>
+            <select
+              class="form-control"
+              name="WishlistItems[${itemIndex}][importance]"
+            >
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          <div class="form-check">
+            <input
+              id="received-${itemIndex}"
+              class="form-check-input"
+              type="checkbox"
+              name="WishlistItems[${itemIndex}][received]"
+            >
+            <label class="form-check-label" for="received-${itemIndex}">
+              Received
+            </label>
+          </div>
+        </li>
+      `)
+    })
+
+    $('#wishlist-form').on('click', '.delete-item-btn', (e) => {
+      const $elem = $(e.target)
+      const $parent = $elem.parentsUntil('ul', 'li')
+      $parent.remove()
+
+      const $titleNumbers = $('#wishlist-form ul li h3 span')
+      $titleNumbers.each((i, titleNumber) => {
+        $(titleNumber).text(i + 1)
+      })
+    })
+  })
+</script>

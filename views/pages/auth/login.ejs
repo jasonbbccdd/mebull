@@ -1,0 +1,14 @@
+<%- contentFor('meta') %>
+<title>Login</title>
+<%- contentFor('styles') %>
+<%- contentFor('scripts') %>
+<%- contentFor('body') %>
+<div id="auth-login" class="container my-3">
+  <h1 class="mb-3 text-center">Login</h1>
+
+  <div class="row">
+    <div class="col-12 col-sm-8 offset-sm-2">
+      <%- include('_partials/form', { action: '/api/auth/login', redirect: '/' }) %>
+    </div>
+  </div>
+</div>
